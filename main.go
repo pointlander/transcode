@@ -15,6 +15,7 @@ import (
 
 var (
 	source = flag.String("source", "", "source of file")
+	rpi    = flag.Bool("rpi", false, "encode for raspberry pi")
 	mock   = flag.Bool("mock", true, "print what will be done")
 )
 
@@ -45,6 +46,13 @@ func transcode(source, destination string) {
 	args := []string{
 		"-i", source, "-c:v", "libx264", "-preset", "slow", "-crf", "26", "-c:a",
 		"mp3", destination,
+	}
+	if *rpi {
+		args = []string{
+			"-i", source, "-c:v", "libx264", "-preset", "slow", "-crf", "26",
+			"-pix_fmt", "yuv420p", "-profile:v", "high",
+			"-c:a", "mp3", destination,
+		}
 	}
 	command := name
 	for _, arg := range args {
